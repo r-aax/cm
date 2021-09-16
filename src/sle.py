@@ -192,7 +192,6 @@ class SystemOfLinearEquations:
 
         eqi = self.Equations[i]
         eqj = self.Equations[j]
-
         for k in range(self.N):
             eqj.A[k] += q * eqi.A[k]
         eqj.B += q * eqi.B
@@ -212,6 +211,16 @@ class SystemOfLinearEquations:
 
     # ----------------------------------------------------------------------------------------------
 
+    def gauss_steps_forward(self):
+        """
+        Steps forward of Gauss method.
+        """
+
+        for i in range(self.N):
+            self.gauss_step_forward(i)
+
+    # ----------------------------------------------------------------------------------------------
+
     def gauss_step_back(self, i):
         """
         Step of Gauss method with equation index i.
@@ -224,6 +233,16 @@ class SystemOfLinearEquations:
 
     # ----------------------------------------------------------------------------------------------
 
+    def gauss_steps_back(self):
+        """
+        Steps back of Gauss method.
+        """
+
+        for i in range(self.N - 1, -1, -1):
+            self.gauss_step_back(i)
+
+    # ----------------------------------------------------------------------------------------------
+
     def solve_gauss(self):
         """
         Solve system of equations with Gauss' method.
@@ -232,13 +251,9 @@ class SystemOfLinearEquations:
         self.Method = 'gauss'
         t = time.time()
 
-        # Steps forward.
-        for i in range(self.N):
-            self.gauss_step_forward(i)
-
-        # Steps back.
-        for i in range(self.N - 1, -1, -1):
-            self.gauss_step_back(i)
+        # Steps forward and back.
+        self.gauss_steps_forward()
+        self.gauss_steps_back()
 
         # Copy values from right vector to X.
         self.X = [self.Equations[i].B for i in range(self.N)]
@@ -268,6 +283,7 @@ if __name__ == '__main__':
     print('Test sle.py module:')
     s = SystemOfLinearEquations()
     s.set_random(10)
+    s.gauss_step_forward(0)
     s.print()
     s.solve_gauss()
     s.print()
