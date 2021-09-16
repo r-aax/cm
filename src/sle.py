@@ -314,7 +314,7 @@ class SystemOfLinearEquations:
 
     # ----------------------------------------------------------------------------------------------
 
-    def solve_tridiagonal_thomas(self):
+    def solve_tridiagonal(self):
         """
         Solve system for tridiagonal matrix with Thomas algorithm.
 
@@ -386,7 +386,7 @@ if __name__ == '__main__':
     s = SystemOfLinearEquations()
     s.set_random(10, only_tridiagonal=True)
     s.print()
-    s.solve_tridiagonal_thomas()
+    s.solve_tridiagonal()
     s.print()
 
 # ==================================================================================================
