@@ -111,7 +111,8 @@ class SystemOfLinearEquations:
         :return: A coefficients matrix.
         """
 
-        return [eq.A for eq in self.Equations]
+        # We have to return copy of coefficients.
+        return [eq.A[:] for eq in self.Equations]
 
     # ----------------------------------------------------------------------------------------------
 
@@ -130,10 +131,35 @@ class SystemOfLinearEquations:
         Solve system using scipy.
         """
 
-        t = time.time()
-        self.X = spla.solve(self.collect_a(), self.collect_b())
-        self.Solved = True
         self.Method = 'scipy'
+        t = time.time()
+
+        self.X = spla.solve(self.collect_a(), self.collect_b())
+
+        self.Solved = True
+        self.Time = time.time() - t
+
+    # ----------------------------------------------------------------------------------------------
+
+    def solve_cramer(self):
+        """
+        Solve system with Cramer's rule.
+        """
+
+        self.Method = 'cramer'
+        t = time.time()
+
+        self.X = [0.0] * self.N
+
+        d = np.linalg.det(self.collect_a())
+        b = self.collect_b()
+        for i in range(self.N):
+            a = self.collect_a()
+            for j in range(self.N):
+                a[j][i] = b[j]
+            self.X[i] = np.linalg.det(a) / d
+
+        self.Solved = True
         self.Time = time.time() - t
 
     # ----------------------------------------------------------------------------------------------
@@ -159,7 +185,7 @@ if __name__ == '__main__':
     s = SystemOfLinearEquations()
     s.set_random(10)
     s.print()
-    s.solve_scipy()
+    s.solve_cramer()
     s.print()
 
 # ==================================================================================================
