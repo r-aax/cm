@@ -17,9 +17,10 @@ class LinearEquation:
     def __init__(self, ind, a, b):
         """
         Constructor.
+
         :param ind: Index of equation.
-        :param a: Array of coefficients. a[i] - coefficient for xi member.
-        :param b: Right part of value.
+        :param a:   Array of coefficients. a[i] - coefficient for xi member.
+        :param b:   Right part of value.
         """
 
         self.Ind = ind
@@ -51,6 +52,7 @@ class SystemOfLinearEquations:
     def set_ab(self, a, b):
         """
         Create system from given coefficients matrix and right values vector.
+
         :param a: Matrix of coefficients.
         :param b: Right values vector.
         """
@@ -65,9 +67,10 @@ class SystemOfLinearEquations:
     def set_random(self, n, a=0.0, b=1.0, only_tridiagonal=False):
         """
         Set random values for coefficients matrix and right values vector.
-        :param n: System size.
-        :param a: Start value for generate random numbers.
-        :param b: End value for generate random numbers.
+
+        :param n:                System size.
+        :param a:                Start value for generate random numbers.
+        :param b:                End value for generate random numbers.
         :param only_tridiagonal: Init only tridiagonal elements.
         """
 
@@ -118,6 +121,7 @@ class SystemOfLinearEquations:
     def collect_a(self):
         """
         Collect A matrix.
+
         :return: A coefficients matrix.
         """
 
@@ -129,6 +133,7 @@ class SystemOfLinearEquations:
     def collect_b(self):
         """
         Collect B vector of right values.
+
         :return: B vector of right values.
         """
 
@@ -177,6 +182,7 @@ class SystemOfLinearEquations:
     def div_ith_equation_on_jth_element(self, i, j):
         """
         Normalize i-th equation by division on i-th element.
+
         :param i: Equation number.
         :param j: Element number.
         """
@@ -192,6 +198,7 @@ class SystemOfLinearEquations:
     def add_ith_equation_to_jth_equation_with_coeff(self, i, j, q):
         """
         Add i-th equation to j-th equation with k coefficient.
+
         :param i: First equation.
         :param j: Second equation.
         :param q: Coefficient.
@@ -211,6 +218,7 @@ class SystemOfLinearEquations:
     def gauss_step_forward(self, i):
         """
         Step of Gauss method with equation index i.
+
         :param i: Equation index.
         """
 
@@ -234,6 +242,7 @@ class SystemOfLinearEquations:
     def gauss_step_back(self, i):
         """
         Step of Gauss method with equation index i.
+
         :param i: Equation index.
         """
 
@@ -276,6 +285,7 @@ class SystemOfLinearEquations:
     def diff(self):
         """
         Calculate diff vector.
+
         :return: Diff vector.
         """
 
