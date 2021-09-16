@@ -164,6 +164,90 @@ class SystemOfLinearEquations:
 
     # ----------------------------------------------------------------------------------------------
 
+    def div_ith_equation_on_jth_element(self, i, j):
+        """
+        Normalize i-th equation by division on i-th element.
+        :param i: Equation number.
+        :param j: Element number.
+        """
+
+        eq = self.Equations[i]
+        d = eq.A[j]
+        for k in range(self.N):
+            eq.A[k] /= d
+        eq.B /= d
+
+    # ----------------------------------------------------------------------------------------------
+
+    def add_ith_equation_to_jth_equation_with_coeff(self, i, j, q):
+        """
+        Add i-th equation to j-th equation with k coefficient.
+        :param i: First equation.
+        :param j: Second equation.
+        :param q: Coefficient.
+        """
+
+        if i == j:
+            raise Exception('add_ith_equation_to_jth_equation_with_coeff: i == j')
+
+        eqi = self.Equations[i]
+        eqj = self.Equations[j]
+
+        for k in range(self.N):
+            eqj.A[k] += q * eqi.A[k]
+        eqj.B += q * eqi.B
+
+    # ----------------------------------------------------------------------------------------------
+
+    def gauss_step_forward(self, i):
+        """
+        Step of Gauss method with equation index i.
+        :param i: Equation index.
+        """
+
+        self.div_ith_equation_on_jth_element(i, i)
+        for j in range(i + 1, self.N):
+            q = -self.Equations[j].A[i]
+            self.add_ith_equation_to_jth_equation_with_coeff(i, j, q)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def gauss_step_back(self, i):
+        """
+        Step of Gauss method with equation index i.
+        :param i: Equation index.
+        """
+
+        for j in range(i - 1, -1, -1):
+            q = -self.Equations[j].A[i]
+            self.add_ith_equation_to_jth_equation_with_coeff(i, j, q)
+
+    # ----------------------------------------------------------------------------------------------
+
+    def solve_gauss(self):
+        """
+        Solve system of equations with Gauss' method.
+        """
+
+        self.Method = 'gauss'
+        t = time.time()
+
+        # Steps forward.
+        for i in range(self.N):
+            self.gauss_step_forward(i)
+
+        # Steps back.
+        for i in range(self.N - 1, -1, -1):
+            self.gauss_step_back(i)
+
+        # Copy values from right vector to X.
+        self.X = [self.Equations[i].B for i in range(self.N)]
+
+        self.Solved = True
+        self.Time = time.time() - t
+
+    # ----------------------------------------------------------------------------------------------
+
     def diff(self):
         """
         Calculate diff vector.
@@ -185,7 +269,7 @@ if __name__ == '__main__':
     s = SystemOfLinearEquations()
     s.set_random(10)
     s.print()
-    s.solve_cramer()
+    s.solve_gauss()
     s.print()
 
 # ==================================================================================================
