@@ -62,17 +62,25 @@ class SystemOfLinearEquations:
 
     # ----------------------------------------------------------------------------------------------
 
-    def set_random(self, n, a=0.0, b=1.0):
+    def set_random(self, n, a=0.0, b=1.0, only_tridiagonal=False):
         """
         Set random values for coefficients matrix and right values vector.
         :param n: System size.
         :param a: Start value for generate random numbers.
         :param b: End value for generate random numbers.
+        :param only_tridiagonal: Init only tridiagonal elements.
         """
 
         mr = lambda m: [random.uniform(a, b) for i in range(m)]
         self.N = n
         self.Equations = [LinearEquation(i, mr(n), random.uniform(a, b)) for i in range(n)]
+
+        # Delete extra elements.
+        if only_tridiagonal:
+            for i in range(self.N):
+                for j in range(self.N):
+                    if abs(i - j) > 1:
+                        self.Equations[i].A[j] = 0.0
 
     # ----------------------------------------------------------------------------------------------
 
@@ -284,7 +292,7 @@ if __name__ == '__main__':
 
     print('Test sle.py module:')
     s = SystemOfLinearEquations()
-    s.set_random(10)
+    s.set_random(10, only_tridiagonal=True)
     s.print()
     s.solve_gauss()
     s.print()
