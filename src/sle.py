@@ -205,7 +205,9 @@ class SystemOfLinearEquations:
         """
 
         if i == j:
-            raise Exception('add_ith_equation_to_jth_equation_with_coeff: i == j')
+            raise Exception('{0}.{1}: {2}.'.format('SystemOfLinearEquations',
+                                                   'add_ith_equation_to_jth_equation_with_coeff',
+                                                   'i == j'))
 
         eqi = self.Equations[i]
         eqj = self.Equations[j]
@@ -282,6 +284,70 @@ class SystemOfLinearEquations:
 
     # ----------------------------------------------------------------------------------------------
 
+    def is_tridiagonal(self):
+        """
+        Check if matrix of equations system is tridiagonal.
+
+        :return: True - if matrix of the system is tridiagonal,
+                 False - otherwise.
+        """
+
+        for i in range(self.N):
+            for j in range(self.N):
+                if abs(i - j) > 1:
+                    if self.Equations[i].A[j] > 0.0:
+                        return False
+
+        return True
+
+    # ----------------------------------------------------------------------------------------------
+
+    def solve_tridiagonal_thomas(self):
+        """
+        Solve system for tridiagonal matrix with Thomas algorithm.
+        """
+
+        if not self.is_tridiagonal():
+            raise Exception('{0}.{1}: {2}.'.format('SystemOfLinearEquations',
+                                                   'solve_tridiagonal_thomas',
+                                                   'not tridiagonal system'))
+
+        self.Method = 'tridiagonal thomas'
+        t = time.time()
+
+        # Extract matrix and rights values vector.
+        matrix_a = self.collect_a()
+        vector_b = self.collect_b()
+
+        # Functions for get coefficients.
+        a = lambda i: matrix_a[i][i - 1]
+        b = lambda i: matrix_a[i][i]
+        c = lambda i: matrix_a[i][i + 1]
+        f = lambda i: vector_b[i]
+
+        # Step forward of tridiagonal system solving.
+        alfa = [0.0] * (self.N - 1)
+        beta = [0.0] * self.N
+
+        # Step forward.
+        alfa[0] = c(0) / b(0)
+        beta[0] = f(0) / b(0)
+        for i in range(1, self.N - 1):
+            alfa[i] = c(i) / (b(i) - a(i) * alfa[i - 1])
+        for i in range(1, self.N):
+            beta[i] = (f(i) - a(i) * beta[i - 1]) / (b(i) - a(i) * alfa[i - 1])
+
+        # Step back.
+        self.X = [0.0] * self.N
+        self.X[-1] = beta[-1]
+        for i in range(self.N - 2, -1, -1):
+            self.X[i] = beta[i] - alfa[i] * self.X[i + 1]
+
+        self.Solved = True
+        self.Time = time.time() - t
+
+    # ----------------------------------------------------------------------------------------------
+
     def diff(self):
         """
         Calculate diff vector.
@@ -304,7 +370,7 @@ if __name__ == '__main__':
     s = SystemOfLinearEquations()
     s.set_random(10, only_tridiagonal=True)
     s.print()
-    s.solve_gauss()
+    s.solve_tridiagonal_thomas()
     s.print()
 
 # ==================================================================================================
