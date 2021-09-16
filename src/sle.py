@@ -144,6 +144,8 @@ class SystemOfLinearEquations:
     def solve_scipy(self):
         """
         Solve system using scipy.
+
+        :return: Time.
         """
 
         self.Method = 'scipy'
@@ -154,11 +156,15 @@ class SystemOfLinearEquations:
         self.Solved = True
         self.Time = time.time() - t
 
+        return self.Time
+
     # ----------------------------------------------------------------------------------------------
 
     def solve_cramer(self):
         """
         Solve system with Cramer's rule.
+
+        :return: Time.
         """
 
         self.Method = 'cramer'
@@ -176,6 +182,8 @@ class SystemOfLinearEquations:
 
         self.Solved = True
         self.Time = time.time() - t
+
+        return self.Time
 
     # ----------------------------------------------------------------------------------------------
 
@@ -267,6 +275,8 @@ class SystemOfLinearEquations:
     def solve_gauss(self):
         """
         Solve system of equations with Gauss' method.
+
+        :return: Time.
         """
 
         self.Method = 'gauss'
@@ -281,6 +291,8 @@ class SystemOfLinearEquations:
 
         self.Solved = True
         self.Time = time.time() - t
+
+        return self.Time
 
     # ----------------------------------------------------------------------------------------------
 
@@ -305,6 +317,8 @@ class SystemOfLinearEquations:
     def solve_tridiagonal_thomas(self):
         """
         Solve system for tridiagonal matrix with Thomas algorithm.
+
+        :return: Time.
         """
 
         if not self.is_tridiagonal():
@@ -345,6 +359,8 @@ class SystemOfLinearEquations:
 
         self.Solved = True
         self.Time = time.time() - t
+
+        return self.Time
 
     # ----------------------------------------------------------------------------------------------
 
