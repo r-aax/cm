@@ -95,7 +95,7 @@ class SystemOfLinearEquations:
         # Print result, if system is solved.
         if self.Solved:
             xi_strs = [fformat.format(x) for x in self.X]
-            xi_str = 'X = [{0}]'.format(' '.join(xi_strs))
+            xi_str = '   X = [{0}]'.format(' '.join(xi_strs))
             print(xi_str)
 
     # ----------------------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ class SystemOfLinearEquations:
         Colve system using scipy.
         """
 
-        self.X = spla.solve([[1.0, 0.0], [0.0, 1.0]], [1.0, 1.0])
+        self.X = spla.solve([eq.A for eq in self.Equations], [eq.B for eq in self.Equations])
         self.Solved = True
 
 # ==================================================================================================
