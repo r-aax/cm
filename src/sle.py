@@ -62,15 +62,17 @@ class SystemOfLinearEquations:
 
     # ----------------------------------------------------------------------------------------------
 
-    def set_random(self, n):
+    def set_random(self, n, a=0.0, b=1.0):
         """
         Set random values for coefficients matrix and right values vector.
         :param n: System size.
+        :param a: Start value for generate random numbers.
+        :param b: End value for generate random numbers.
         """
 
-        mr = lambda m: [random.random() for i in range(m)]
+        mr = lambda m: [random.uniform(a, b) for i in range(m)]
         self.N = n
-        self.Equations = [LinearEquation(i, mr(n), random.random()) for i in range(n)]
+        self.Equations = [LinearEquation(i, mr(n), random.uniform(a, b)) for i in range(n)]
 
     # ----------------------------------------------------------------------------------------------
 
@@ -283,7 +285,6 @@ if __name__ == '__main__':
     print('Test sle.py module:')
     s = SystemOfLinearEquations()
     s.set_random(10)
-    s.gauss_step_forward(0)
     s.print()
     s.solve_gauss()
     s.print()
