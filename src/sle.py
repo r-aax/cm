@@ -2,9 +2,10 @@
 System of Linear Equations realization.
 """
 
-import numpy as nm
+import numpy as np
 import scipy.linalg as spla
 import random
+import time
 
 # ==================================================================================================
 
@@ -40,6 +41,8 @@ class SystemOfLinearEquations:
         # Create empty system.
         self.N = 0
         self.Equations = []
+        self.Method = ''
+        self.Time = 0.0
         self.X = []
         self.Solved = False
 
@@ -78,35 +81,74 @@ class SystemOfLinearEquations:
 
         print('SystemOfLinearEquations:')
 
-        fformat = '{0:12.8f}'
+        ff = '{0:12.8f}'
+        ja = lambda a: ' '.join([ff.format(ai) for ai in a])
 
-        # Print each line.
-        for i in range(self.N):
-            eq = self.Equations[i]
-            ai_strs = [fformat.format(aij) for aij in eq.A]
-            bi_str = fformat.format(eq.B)
-            if (self.N - 1) // 2 == i:
-                ch = '='
-            else:
-                ch = ' '
-            ai_str = '{0}) [{1}] [x{2}] {3} [{4}]'.format(eq.Ind, ' '.join(ai_strs), i, ch, bi_str)
-            print(ai_str)
+        # Print system if it is not solved yet.
+        if not self.Solved:
+            for i in range(self.N):
+                eq = self.Equations[i]
+                bi_str = ff.format(eq.B)
+                if (self.N - 1) // 2 == i:
+                    ch = '='
+                else:
+                    ch = ' '
+                ai_str = '{0}) [{1}] [x{2}] {3} [{4}]'.format(eq.Ind, ja(eq.A), i, ch, bi_str)
+                print(ai_str)
 
         # Print result, if system is solved.
         if self.Solved:
-            xi_strs = [fformat.format(x) for x in self.X]
-            xi_str = '   X = [{0}]'.format(' '.join(xi_strs))
-            print(xi_str)
+            print('   Method = {0}, time = {1:.8f}'.format(self.Method, self.Time))
+            print('   X = [{0}]'.format(ja(self.X)))
+            diff = self.diff()
+            print('   D = [{0}] / {1}'.format(ja(diff), ff.format(np.linalg.norm(diff))))
+
+    # ----------------------------------------------------------------------------------------------
+
+    def collect_a(self):
+        """
+        Collect A matrix.
+        :return: A coefficients matrix.
+        """
+
+        return [eq.A for eq in self.Equations]
+
+    # ----------------------------------------------------------------------------------------------
+
+    def collect_b(self):
+        """
+        Collect B vector of right values.
+        :return: B vector of right values.
+        """
+
+        return [eq.B for eq in self.Equations]
 
     # ----------------------------------------------------------------------------------------------
 
     def solve_scipy(self):
         """
-        Colve system using scipy.
+        Solve system using scipy.
         """
 
-        self.X = spla.solve([eq.A for eq in self.Equations], [eq.B for eq in self.Equations])
+        t = time.time()
+        self.X = spla.solve(self.collect_a(), self.collect_b())
         self.Solved = True
+        self.Method = 'scipy'
+        self.Time = time.time() - t
+
+    # ----------------------------------------------------------------------------------------------
+
+    def diff(self):
+        """
+        Calculate diff vector.
+        :return: Diff vector.
+        """
+
+        npa = np.array(self.collect_a())
+        npx = self.X
+        npb = np.array(self.collect_b())
+
+        return npb - np.dot(npa, npx)
 
 # ==================================================================================================
 
@@ -115,7 +157,8 @@ if __name__ == '__main__':
 
     print('Test sle.py module:')
     s = SystemOfLinearEquations()
-    s.set_random(3)
+    s.set_random(10)
+    s.print()
     s.solve_scipy()
     s.print()
 
